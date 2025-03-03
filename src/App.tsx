@@ -7,6 +7,8 @@ import WelcomeScreen from './screens/WelcomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import SignupScreen from './screens/SignupScreen';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
+import OtpVerification from './screens/OtpVerification';
+import ResetPasswordScreen from './screens/ResetPasswordScreen'
 
 const Stack = createStackNavigator();
 
@@ -20,7 +22,16 @@ const App = () => {
         <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}} />
         <Stack.Screen name="Signup" component={SignupScreen} options={{headerShown: false}} />
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{headerShown: false}} />
-        <Stack.Screen name="verifyOTP" component={ForgotPasswordScreen} options={{headerShown: false}} />
+        {/* <Stack.Screen name="verifyOTP" component={OtpVerification} options={{headerShown: false}} /> */}
+          <Stack.Screen 
+            name="verifyOTP" 
+            options={{ headerShown: false }}
+          >
+            {props => <OtpVerification {...props} onVerificationSuccess={() => props.navigation.navigate('Home')} onBackPress={() => props.navigation.goBack()} />}
+          </Stack.Screen>
+          <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} options={{ headerShown: false }} />
+
+
       </Stack.Navigator>
     </NavigationContainer>
   );

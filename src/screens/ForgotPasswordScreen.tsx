@@ -1,29 +1,52 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import axios from 'axios';
-import { EndPoint } from '../services/apiServices';
-const ForgotPasswordScreen:React.FC<WelcomeScreenProps> = ({ navigation }: any) => {
-  const [email, setEmail] = useState('');
+// import axios from 'axios';
+import { EndPoint, } from '../services/apiServices';
+// const ForgotPasswordScreen:React.FC<WelcomeScreenProps> = ({ navigation }: any) => {
+import { StackNavigationProp } from '@react-navigation/stack';
+import api from '../services/apiClient';
+
+  type RootStackParamList = {
+    verifyOTP: { userEmail: string };
+  };
+  
+  type ForgotPasswordScreenNavigationProp = StackNavigationProp<RootStackParamList, 'verifyOTP'>;
+  
+  interface ForgotPasswordScreenProps {
+    navigation: ForgotPasswordScreenNavigationProp;
+  }
+  
+  const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({ navigation }) => {
+  
+  const [userEmail, setEmail] = useState('');
 
   const handleSendCode = async () => {
-    if (!email) {
+    if (!userEmail) {
       Alert.alert('Error', 'Please enter your email address.');
       return;
     }
 
     try {
-      const response = await axios.post(EndPoint.get_otp, {
-        email,
+      const response = await api.post(EndPoint.get_otp, {
+        userEmail,
       });
+      console.log("Response received:", response);
+    // try {
+    //   const response = await axios.post('https://noblegivingbackend.azurewebsites.net/doner/auth/send-doner-otp', {
+    //     userEmail,
+    //   });
+    //   console.log("Response received:", response);
+      
 
       if (response.status === 200) {
         Alert.alert('Success', 'A reset code has been sent to your email.');
-        navigation.navigate('VerifyOTP'); // Navigate to verification screen
+        navigation.navigate('verifyOTP',{userEmail}); // Navigate to verification screen
       } else {
         throw new Error(response.data.message || 'Something went wrong.');
       }
     } catch (error: any) {
+      console.error("Error:", error.response || error);
       Alert.alert('Error', error.response?.data?.message || 'Failed to send reset code.');
     }
   };
@@ -41,7 +64,7 @@ const ForgotPasswordScreen:React.FC<WelcomeScreenProps> = ({ navigation }: any) 
           style={styles.input}
           placeholder="Enter your email address"
           placeholderTextColor="#999"
-          value={email}
+          value={userEmail}
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"

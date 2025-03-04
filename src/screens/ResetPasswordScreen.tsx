@@ -17,13 +17,15 @@ import {
 import axios from 'axios';
 import { EndPoint } from '../services/apiServices';
 import Icon from 'react-native-vector-icons/Feather';
+import api from '../services/apiClient';
 
 const ResetPasswordScreen = ({ navigation, route }: any) => {
-  const [password, setPassword] = useState('');
+  const [newPassword, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { userEmail } = route.params;
+  const [isLoading,setIsLoading] = useState(false);
   
   // Add animation value for smooth transitions
   const keyboardHeight = useState(new Animated.Value(0))[0];
@@ -58,15 +60,17 @@ const ResetPasswordScreen = ({ navigation, route }: any) => {
   }, []);
 
   const handleResetPassword = async () => {
-    if (password !== confirmPassword) {
+    if (newPassword !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
+    setIsLoading(true);
+
     try {
-      const response = await axios.post(EndPoint.reset_password, {
+      const response = await api.post(EndPoint.reset_password, {
         userEmail,
-        password,
+        newPassword,
       });
 
       if (response.status === 200) {
@@ -77,6 +81,8 @@ const ResetPasswordScreen = ({ navigation, route }: any) => {
       }
     } catch (error: any) {
       Alert.alert('Error', error.response?.data?.message || 'Something went wrong.');
+    } finally{
+      setIsLoading(false);
     }
   };
 
@@ -121,7 +127,7 @@ const ResetPasswordScreen = ({ navigation, route }: any) => {
                     placeholder="Enter new password"
                     placeholderTextColor="#A0AEC0"
                     secureTextEntry={!showPassword}
-                    value={password}
+                    value={newPassword}
                     onChangeText={setPassword}
                     autoCapitalize="none"
                   />
@@ -161,8 +167,10 @@ const ResetPasswordScreen = ({ navigation, route }: any) => {
                     <Text style={styles.backButtonText}>Go Back</Text>
                   </TouchableOpacity>
                   
-                  <TouchableOpacity style={styles.resetButton} onPress={handleResetPassword}>
-                    <Text style={styles.resetButtonText}>Update Password</Text>
+                  <TouchableOpacity style={styles.resetButton} onPress={handleResetPassword} disabled={isLoading}>
+                    <Text style={styles.resetButtonText}>
+                      {isLoading?'Updating...':'Update Password'}
+                      </Text>
                   </TouchableOpacity>
                 </View>
               </View>

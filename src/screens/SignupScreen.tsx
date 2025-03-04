@@ -100,7 +100,7 @@ const SignupScreen: React.FC = () => {
       });
       console.log('Signup successful:', response.data);
       Alert.alert('Success', 'Account created successfully');
-      navigation.navigate('Login');
+      navigation.navigate('Login' as never);
     } catch (error) {
       console.error('Signup error:', error);
       

@@ -153,7 +153,7 @@ const LoginScreen:React.FC<LoginScreenProps> = ({navigation}) => {
                       </View>
                       <TouchableOpacity
                         style={[styles.button, styles.createAccountButton]}
-                        onPress={handleSubmit}
+                        onPress={()=> handleSubmit()}
                         // disabled={!isValid}
                       >
                       {loading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.buttonTextWhite} >Login</Text>}
